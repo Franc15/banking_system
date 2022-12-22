@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
 
-from models import setup_db
+from models import setup_db, User
 
 
 def create_app(test_config=None):
@@ -12,6 +12,8 @@ def create_app(test_config=None):
     app = Flask(__name__)
     app.app_context().push()
     setup_db(app)
+
+    CORS(app)
 
     @app.after_request
     def after_request(response):
@@ -21,7 +23,41 @@ def create_app(test_config=None):
 
     @app.route('/')
     def hello():
-        pass
+        return 'Hello, World!'
+
+    @app.route('/register', methods=['POST'])
+    def user_register():
+        # get user details 
+        body = request.get_json()
+        fname = body.get('fname', None)
+        lname = body.get('lname', None)
+        gender = body.get('gender', None)
+        dob = body.get('dob', None)
+        phone = body.get('phone', None)
+        email = body.get('email', None)
+        password = body.get('password', None)
+        country = body.get('country', None)
+        empStat = body.get('empStat', None)
+        address = body.get('address', None)
+        # create new user object
+        user = User(fname
+                    , lname
+                    , gender
+                    , dob
+                    , phone
+                    , email
+                    , password
+                    , country
+                    , empStat)
+
+        # add user to db 
+        user.insert()
+        # return the user as json
+        return jsonify({
+            'success': True,
+            'data': user.format()
+        })
+
 
 
 
