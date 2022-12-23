@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
 
-from models import setup_db, User
+from models import setup_db, User, Account, AccountType
 
 
 def create_app(test_config=None):
@@ -34,6 +34,7 @@ def create_app(test_config=None):
         dob = body.get('dob', None)
         email = body.get('email', None)
         password = body.get('password', None)
+        accType = body.get('accType', None)
         # create new user object
         user = User(name=name
                     , gender=gender
@@ -41,9 +42,22 @@ def create_app(test_config=None):
                     , email=email
                     , password=password
                     )
+        # create new account type object
+        acc_type = AccountType.query.filter(AccountType.accType == accType).one_or_none()
+
+        # create new account object
+        account = Account(accNo=random.randint(1000000000, 9999999999)
+                        , balance=0
+                        , account_owner=user
+                        , account_type=acc_type
+                        )
+
 
         # add user to db 
         user.insert()
+        # add account to db
+        account.insert()
+
         # return the user as json
         return jsonify({
             'success': True,
