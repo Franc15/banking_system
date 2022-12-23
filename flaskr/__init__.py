@@ -29,26 +29,18 @@ def create_app(test_config=None):
     def user_register():
         # get user details 
         body = request.get_json()
-        fname = body.get('fname', None)
-        lname = body.get('lname', None)
+        name = body.get('name', None)
         gender = body.get('gender', None)
         dob = body.get('dob', None)
-        phone = body.get('phone', None)
         email = body.get('email', None)
         password = body.get('password', None)
-        country = body.get('country', None)
-        empStat = body.get('empStat', None)
-        address = body.get('address', None)
         # create new user object
-        user = User(fname
-                    , lname
-                    , gender
-                    , dob
-                    , phone
-                    , email
-                    , password
-                    , country
-                    , empStat)
+        user = User(name=name
+                    , gender=gender
+                    , dob=dob
+                    , email=email
+                    , password=password
+                    )
 
         # add user to db 
         user.insert()

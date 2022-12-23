@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, Integer, Date, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
 
-database_name = 'banking' # edit here
+database_name = 'bank_test' # edit here
 database_path = 'postgresql://{}/{}'.format('postgres:franc123@localhost:5432', database_name)
 
 db = SQLAlchemy()
@@ -21,29 +21,15 @@ def setup_db(app, database_path=database_path):
 
 
 class User(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
-    fname = Column(String)
-    lname = Column(String)
+    name = Column(String)
     gender = Column(String)
     dob = Column(Date)
-    phone = Column(String)
     password = Column(String)
-    country = Column(String)
     email = Column(String)
-    empStat = Column(String)
-
-    def __init__(self, fname, lname, gender, dob, phone, password, country, email, empStat):
-        self.fname = fname
-        self.lname = lname
-        self.gender = gender
-        self.dob = dob
-        self.phone = phone
-        self.password = password
-        self.country = country
-        self.email = email
-        self.empStat = empStat
+    accounts = db.relationship('Account', backref='account_owner')
 
 
     def insert(self):
@@ -59,13 +45,64 @@ class User(db.Model):
 
     def format(self):
         return {
+            'id': self.id
+        }
+
+class Account(db.Model):
+    __tablename__ = 'accounts'
+
+    id = Column(Integer, primary_key=True)
+    accNo = Column(String)
+    balance = Column(Integer)
+    user_id = Column(Integer, db.ForeignKey('user.id'), nullable=False)
+    accType_id = Column(Integer, db.ForeignKey('account_type.id'), nullable=False)
+
+    # def __init__(self, accNo, accType, balance, user):
+    #     self.accNo = accNo
+    #     self.accType = accType
+    #     self.balance = balance
+    #     self.user = user
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
             'id': self.id,
-            'fname': self.fname,
-            'lname': self.lname,
-            'gender': self.gender,
-            'dob': self.dob,
-            'phone': self.phone,
-            'password': self.password,
-            'country': self.country,
-            'email': self.email
+            'accNo': self.accNo,
+            'accType': self.accType,
+            'balance': self.balance,
+            'user_id': self.user
+        }
+
+class AccountType(db.Model):
+    __tablename__ = 'account_type'
+
+    id = Column(Integer, primary_key=True)
+    accType = Column(String)
+    accounts = db.relationship('Account', backref='account_type')
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'id': self.id,
+            'accType': self.accType
         }
