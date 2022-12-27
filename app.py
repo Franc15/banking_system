@@ -11,7 +11,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     app.app_context().push()
-    setup_db(app)
+    # setup_db(app)
 
     CORS(app)
 
@@ -25,44 +25,44 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
-    @app.route('/register', methods=['POST'])
-    def user_register():
-        # get user details 
-        body = request.get_json()
-        name = body.get('name', None)
-        gender = body.get('gender', None)
-        dob = body.get('dob', None)
-        email = body.get('email', None)
-        password = body.get('password', None)
-        accType = body.get('accType', None)
-        # create new user object
-        user = User(name=name
-                    , gender=gender
-                    , dob=dob
-                    , email=email
-                    , password=password
-                    )
-        # create new account type object
-        acc_type = AccountType.query.filter(AccountType.accType == accType).one_or_none()
+    # @app.route('/register', methods=['POST'])
+    # def user_register():
+    #     # get user details 
+    #     body = request.get_json()
+    #     name = body.get('name', None)
+    #     gender = body.get('gender', None)
+    #     dob = body.get('dob', None)
+    #     email = body.get('email', None)
+    #     password = body.get('password', None)
+    #     accType = body.get('accType', None)
+    #     # create new user object
+    #     user = User(name=name
+    #                 , gender=gender
+    #                 , dob=dob
+    #                 , email=email
+    #                 , password=password
+    #                 )
+    #     # create new account type object
+    #     acc_type = AccountType.query.filter(AccountType.accType == accType).one_or_none()
 
-        # create new account object
-        account = Account(accNo=random.randint(1000000000, 9999999999)
-                        , balance=0
-                        , account_owner=user
-                        , account_type=acc_type
-                        )
+    #     # create new account object
+    #     account = Account(accNo=random.randint(1000000000, 9999999999)
+    #                     , balance=0
+    #                     , account_owner=user
+    #                     , account_type=acc_type
+    #                     )
 
 
-        # add user to db 
-        user.insert()
-        # add account to db
-        account.insert()
+    #     # add user to db 
+    #     user.insert()
+    #     # add account to db
+    #     account.insert()
 
-        # return the user as json
-        return jsonify({
-            'success': True,
-            'data': user.format()
-        })
+    #     # return the user as json
+    #     return jsonify({
+    #         'success': True,
+    #         'data': user.format()
+    #     })
 
 
 
